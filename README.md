@@ -17,34 +17,14 @@ Currently the following capabilities are included:
 	
 The NLP models are using the [DistilBERT](https://arxiv.org/abs/1910.01108) transformer architecture for reduced memory usage and increased performance.  For samples of the text-to-speech output, see the [TTS Audio Samples](#tts-audio-samples) section below.
 
-## Running the Container
+## Installation
 
-jetson-voice is distributed as a Docker container due to the number of dependencies.  There are pre-built containers images available on DockerHub for JetPack 4.4.1 and newer:
+install tested on L4T 35.4.1
 
 ```
-dustynv/jetson-voice:r32.4.4    # JetPack 4.4.1 (L4T R32.4.4)
-dustynv/jetson-voice:r32.5.0    # JetPack 4.5 (L4T R32.5.0) / JetPack 4.5.1 (L4T R32.5.1)
-dustynv/jetson-voice:r32.6.1    # JetPack 4.6 (L4T R32.6.1)
-dustynv/jetson-voice:r32.7.1    # JetPack 4.6.1 (L4T R32.7.1)
+sudo su
+./install.sh
 ```
-
-To download and run the container, you can simply clone this repo and use the `docker/run.sh` script:
-
-``` bash
-$ git clone --branch dev https://github.com/dusty-nv/jetson-voice
-$ cd jetson-voice
-$ docker/run.sh
-```
-
-> **note**:  if you want to use a USB microphone or speaker, plug it in *before* you start the container
-
-There are some optional arguments to `docker/run.sh` that you can use:
-
-* `-r` (`--run`) specifies a run command, otherwise the container will start in an interactive shell.
-* `-v` (`--volume`) mount a directory from the host into the container (`/host/path:/container/path`)
-* `--dev` starts the container in development mode, where all the source files are mounted for easy editing
-
-The run script will automatically mount the `data/` directory into the container, which stores the models and other data files.  If you save files from the container there, they will also show up under `data/` on the host.
 
 ## Automatic Speech Recognition (ASR)
 
@@ -53,7 +33,7 @@ The speech recognition in jetson-voice is a streaming service, so it's intended 
 After you start the container, first run a test audio file (wav/ogg/flac) through [`examples/asr.py`](examples/asr.py) to verify that the system is functional.  Run this command (and all subsequent commands) inside the container:
 
 ``` bash
-$ examples/asr.py --wav data/audio/dusty.wav
+$ examples/asr.py --wav jetson_voice/data/audio/dusty.wav
 
 hi
 hi hi this is dust
@@ -150,7 +130,7 @@ The [MatchboxNet](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/s
 You can run it through the same ASR example as above by specifying the `--model matchboxnet` argument:
 
 ``` bash
-$ examples/asr.py --model matchboxnet --wav data/audio/commands.wav
+$ examples/asr.py --model matchboxnet --wav jetson_voice/data/audio/commands.wav
 
 class 'unknown' (0.384)
 class 'yes' (1.000)
@@ -176,7 +156,7 @@ The numbers printed on the right are the classification probabilities between 0 
 The voice activity model ([VAD MarbleNet](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/stable/asr/speech_classification/models.html#marblenet-vad)) is a binary model that outputs `background` or `speech`:
 
 ``` bash
-$ examples/asr.py --model vad_marblenet --wav data/audio/commands.wav
+$ examples/asr.py --model vad_marblenet --wav jetson_voice/data/audio/commands.wav
 
 class 'background' (0.969)
 class 'background' (0.984)
@@ -363,7 +343,7 @@ The text-to-speech service uses an ensemble of two models:  FastPitch to generat
 The [`examples/tts.py`](examples/tts.py) app can output the audio to a speaker, wav file, or sequence of wav files.  Run it with `--list-devices` to get a list of your audio devices.
 
 ``` bash
-$ examples/tts.py --output-device 11 --output-wav data/audio/tts_test
+$ examples/tts.py --output-device 11 --output-wav jetson_voice/data/audio/tts_test
 
 > The weather tomorrow is forecast to be warm and sunny with a high of 83 degrees.
 
@@ -374,7 +354,7 @@ Run 3 -- Time to first audio: 0.231s. Generated 5.36s of audio. RTFx=23.25.
 Run 4 -- Time to first audio: 0.230s. Generated 5.36s of audio. RTFx=23.36.
 Run 5 -- Time to first audio: 0.230s. Generated 5.36s of audio. RTFx=23.35.
 
-Wrote audio to data/audio/tts_test/0.wav
+Wrote audio to jetson_voice/data/audio/tts_test/0.wav
 
 Enter text, or Q to quit:
 > Sally sells seashells by the seashore.
@@ -386,13 +366,13 @@ Run 3 -- Time to first audio: 0.126s. Generated 2.73s of audio. RTFx=21.68.
 Run 4 -- Time to first audio: 0.126s. Generated 2.73s of audio. RTFx=21.68.
 Run 5 -- Time to first audio: 0.126s. Generated 2.73s of audio. RTFx=21.61.
 
-Wrote audio to data/audio/tts_test/1.wav
+Wrote audio to jetson_voice/data/audio/tts_test/1.wav
 ```
 
 #### TTS Audio Samples
 
-* [Weather forecast](data/audio/tts_examples/0.wav) (wav)
-* [Sally sells seashells](data/audio/tts_examples/1.wav) (wav)
+* [Weather forecast](jetson_voice/data/audio/tts_examples/0.wav) (wav)
+* [Sally sells seashells](jetson_voice/data/audio/tts_examples/1.wav) (wav)
 
 
 ## Tests
@@ -417,7 +397,7 @@ test_nlp.py (distilbert_ner)             PASSED
 test_tts.py (fastpitch_hifigan)          PASSED
 
 passed 10 of 10 tests
-saved logs to data/tests/logs/20210610_1512
+saved logs to jetson_voice/data/tests/logs/20210610_1512
 ```
 
 The logs of the individual tests are printed to the screen and saved to a timestamped directory.

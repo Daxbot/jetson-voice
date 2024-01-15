@@ -22,14 +22,16 @@ import argparse
 #
 # It's recommended to use one of the methods above instead of changing _default_config directly.
 #
+import pkg_resources
+
 _default_global_config = {
-    'version' : 0.1,
-    'model_dir' : '/jetson-voice/data/networks',
-    'model_manifest' : '/jetson-voice/data/networks/manifest.json',
-    'default_backend' : 'tensorrt',
-    'log_level' : 'info',
-    'debug' : False,
-    'profile' : False
+    'version': 0.1,
+    'model_dir': pkg_resources.resource_filename('jetson_voice', 'data/networks'),
+    'model_manifest': pkg_resources.resource_filename('jetson_voice', 'data/networks/manifest.json'),
+    'default_backend': 'tensorrt',
+    'log_level': 'info',
+    'debug': False,
+    'profile': False
 }
 
 
